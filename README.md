@@ -50,6 +50,9 @@ It allows you to use code like this
 
 ```
 
+![Example
+image](https://github.com/TyberiusPrime/dppd_plotnine/raw/master/docs/_static/index.png)
+
 Please see our full documentation at https://dppd_plotnine.readthedocs.io/en/latest/
 for more details of the straight and enhanced plotnine mappings available.
 
