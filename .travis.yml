@@ -1,33 +1,85 @@
-# Travis configuration file using the build matrix feature
-# Read more under http://docs.travis-ci.com/user/build-configuration/
-# THIS SCRIPT IS SUPPOSED TO BE AN EXAMPLE. MODIFY IT ACCORDING TO YOUR NEEDS!
+sudo: true
+dist: xenial
 
-sudo: false
 language: python
-virtualenv:
-  system_site_packages: true
+
+
 matrix:
+  fast_finish: true
   include:
-    - python: 3.4
-      env: DISTRIB="ubuntu" TOX_PYTHON_VERSION="py34" COVERAGE="true"
-    - env: DISTRIB="conda" PYTHON_VERSION="3.6" COVERAGE="false"
+    - python: 3.7
+      env:
+        - JOB: 'UNITTEST_3.7'
+        - FULL_DEPS: true
+    - python: 3.6
+      env:
+        - JOB: 'UNITTEST'
+        - FULL_DEPS: true
+    - python: 3.6
+      env:
+        - JOB: 'UNITTEST_pd_0.22'
+        - FULL_DEPS: true
+    - python: 3.6
+      env:
+        - JOB: 'DOCS'
+        - FULL_DEPS: true
+cache: pip
+
+
+notifications:
+  email: false
+
+before_install:
+  - |
+      echo "before install"
+
+# Install packages
 install:
-  - source tests/travis_install.sh
-  - pip install -r requirements.txt
-  # ^  DEPRECATION WARNING:
-  # The automatic creation of a `requirements.txt` file is deprecated.
-  # See `Dependency Management` in the docs for other options.
-before_script:
-  - git config --global user.email "you@example.com"
-  - git config --global user.name "Your Name"
+  # Install dependencies
+  - |
+     echo "install"
+     pip install -U setuptools
+  - |
+    if [[ "$JOB" == "UNITTEST" ]]; then
+      pip install -e .[testing]
+      pip install flake8
+    elif [[ "$JOB" == "UNITTEST_pd_0.22" ]]; then
+      pip install -e .[testing]
+      pip install pandas==0.22.0
+      pip install flake8
+    elif [[ "$JOB" == "UNITTEST_3.7" ]]; then
+      pip install -e .[testing]
+      pip install flake8
+    
+    elif [[ "$JOB" == "DOCS" ]]; then
+    pip install sphinx sphinx-bootstrap-theme
+    fi
+  - pip list
+
 script:
-  - python setup.py test
-  # ^  Change here if using tox
+  - |
+    if [[ "$JOB" == "UNITTEST" ]]; then
+      coverage erase
+      pytest
+    elif [[ "$JOB" == "UNITTEST_pd_0.22" ]]; then
+      coverage erase
+      pytest
+    elif [[ "$JOB" == "UNITTEST_3.7" ]]; then
+      coverage erase
+      pytest
+     
+    elif [[ "$JOB" == "DOCS" ]]; then
+      # low pandoc version leads to a warning so
+      # SPHINXOPTS=-W fails
+      python setup.py docs
+    fi
+
+
+# Calculate coverage
 after_success:
-  - if [[ "$COVERAGE" == "true" ]]; then coveralls || echo "failed"; fi
-after_script:
-  - travis-cleanup
-cache:
-  pip: true
-  directories:
-    - $HOME/miniconda
+  - echo "success"
+  - |
+      #if [[ "$JOB" == "UNITTEST" ]]; then
+      #coveralls --rcfile=.coveragerc
+    
+

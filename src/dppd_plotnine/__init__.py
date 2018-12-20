@@ -6,6 +6,9 @@ try:
     dist_name = __name__
     __version__ = get_distribution(dist_name).version
 except DistributionNotFound:
-    __version__ = 'unknown'
+    __version__ = "unknown"
 finally:
     del get_distribution, DistributionNotFound
+
+from . import dppd_plotnine  # noqa:F401
+from . import plotnine_extensions  # noqa:F401

@@ -38,7 +38,7 @@ output_dir = os.path.join(__location__, "api")
 module_dir = os.path.join(__location__, "../src/dppd_plotnine")
 try:
     shutil.rmtree(output_dir)
-except FileNotFoundError:
+except (IOError, OSError):
     pass
 
 try:
@@ -56,6 +56,7 @@ try:
 except Exception as e:
     print("Running `sphinx-apidoc` failed!\n{}".format(e))
 
+import sphinx_bootstrap_theme
 # -- General configuration -----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -66,13 +67,18 @@ except Exception as e:
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx', 'sphinx.ext.todo',
               'sphinx.ext.autosummary', 'sphinx.ext.viewcode', 'sphinx.ext.coverage',
               'sphinx.ext.doctest', 'sphinx.ext.ifconfig', 'sphinx.ext.mathjax',
-              'sphinx.ext.napoleon']
+              'sphinx.ext.napoleon',
+              ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
+
 # The suffix of source filenames.
-source_suffix = '.rst'
+source_suffix = ['.rst', '.md']
+source_parsers = {
+   '.md': 'recommonmark.parser.CommonMarkParser',
+}
 
 # The encoding of source files.
 # source_encoding = 'utf-8-sig'
@@ -145,6 +151,23 @@ html_theme_options = {
     'page_width': '1200px'
 }
 
+
+
+html_theme = 'bootstrap'
+
+html_static_path = ["docs/_static"]
+
+
+html_theme_options = {
+    'navbar_title': 'dppd_plotnine',
+    'globaltoc_depth': 2,
+    'globaltoc_includehidden': 'true',
+    'source_link_position': 'footer',
+    'navbar_sidebarrel': False,
+    'navbar_links': [
+    ],
+}
+
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
 
@@ -199,7 +222,7 @@ html_static_path = ['_static']
 # html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
-# html_show_sourcelink = True
+html_show_sourcelink = False
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
 # html_show_sphinx = True
@@ -259,6 +282,8 @@ latex_documents = [
 # If false, no module index is generated.
 # latex_domain_indices = True
 
+
+
 # -- External mapping ------------------------------------------------------------
 python_version = '.'.join(map(str, sys.version_info[0:2]))
 intersphinx_mapping = {
@@ -269,4 +294,22 @@ intersphinx_mapping = {
     'sklearn': ('http://scikit-learn.org/stable', None),
     'pandas': ('http://pandas.pydata.org/pandas-docs/stable', None),
     'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
+    'dppd': ('https://dppd.readthedocs.io/en/stable/', None),
+    'plotnine': ('https://plotnine.readthedocs.io/en/stable/', None),
 }
+
+def autodoc_skip_member(app, what, name, obj, skip, options):
+  excl = obj.__doc__ and ':autodoc_skip:' in obj.__doc__
+  return skip or excl
+
+def setup(app):
+    app.add_stylesheet("my-styles.css") # also can be a full URL
+    app.connect('autodoc-skip-member', autodoc_skip_member)
+    github_doc_root = "https://github.com/TyberiusPrime/dppd_plotnine"
+    app.add_config_value('recommonmark_config', {
+            'url_resolver': lambda url: github_doc_root + url,
+            'auto_toc_tree_section': 'Contents',
+            }, True)
+    #from recommonmark import AutoStructify
+    #app.add_transform(AutoStructify)
+

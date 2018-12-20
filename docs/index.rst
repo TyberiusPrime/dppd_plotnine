@@ -1,26 +1,51 @@
-=============
+==============
 dppd_plotnine
-=============
+==============
 
-This is the documentation of **dppd_plotnine**.
+Welcome to **dppd_plotnine**, which 
+converts `plotnine <https://plotnine.readthedocs.io/en/stable>`_ to  
+work with `dppd <https://dppd.readthedocs.io/en/latest/>`_ and pythonifies it's api.
 
-.. note::
+It's source lives at `github <https://github.com/TyberiusPrime/dppd_plotnine>`_.
 
-    This is the main page of your project's `Sphinx`_ documentation.
-    It is formatted in `reStructuredText`_. Add additional pages
-    by creating rst-files in ``docs`` and adding them to the `toctree`_ below.
-    Use then `references`_ in order to link them from this page, e.g.
-    :ref:`authors` and :ref:`changes`.
+Quickstart
+==========
 
-    It is also possible to refer to the documentation of other Python packages
-    with the `Python domain syntax`_. By default you can reference the
-    documentation of `Sphinx`_, `Python`_, `NumPy`_, `SciPy`_, `matplotlib`_,
-    `Pandas`_, `Scikit-Learn`_. You can add more by extending the
-    ``intersphinx_mapping`` in your Sphinx's ``conf.py``.
+::
 
-    The pretty useful extension `autodoc`_ is activated by default and lets
-    you include documentation from docstrings. Docstrings can be written in
-    `Google style`_ (recommended!), `NumPy style`_ and `classical style`_.
+   import numpy as np
+   from dppd import dppd
+   import dppd_plotnine
+   from plotnine.data import mtcars
+   import plotnine as p9
+   dp, X = dppd()
+
+   plot = (
+        dp(mtcars)
+        .assign(kwh=X.hp * 0.74)
+        .p9()
+        .add_point(
+            "cyl", "kwh", "cyl", position=p9.position_jitter(height=0, random_state=500)
+        )
+        .add_errorbar(
+            x="cyl",
+            y="kwh_median",
+            ymin="kwh_median",
+            ymax="kwh_median",
+            data=dp(X.data)
+            .groupby("cyl")
+            .summarize(("kwh", np.median, "kwh_median"))
+            .pd,
+        )
+    ).pd
+    plot.save("test.png")
+    
+
+
+.. image:: _static/index.png
+
+
+
 
 
 Contents
@@ -28,6 +53,8 @@ Contents
 
 .. toctree::
    :maxdepth: 2
+
+   Call convention / aes replacement <aes.md>
 
    License <license>
    Authors <authors>

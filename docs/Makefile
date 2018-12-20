@@ -8,8 +8,8 @@ PAPER         =
 BUILDDIR      = _build
 AUTODOCDIR    = api
 AUTODOCBUILD  = sphinx-apidoc
-PROJECT       = dppd_plotnine
-MODULEDIR     = ../src/dppd_plotnine
+PROJECT       = dppd
+MODULEDIR     = ../src/dppd
 
 # User-friendly check for sphinx-build
 ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $?), 1)
