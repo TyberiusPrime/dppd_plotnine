@@ -1,6 +1,7 @@
 # dppd_plotnine
 
-| Build status: | ![build status](https://travis-ci.com/TyberiusPrime/dppd_plotnine.svg?branch=master) |
+| Build status: | [![Build
+Status](https://travis-ci.com/TyberiusPrime/dppd_plotnine.svg?branch=master)](https://travis-ci.com/TyberiusPrime/dppd_plotnine)|
 |---------------|-----------------------------------------------------------------------------|
 | Documentation | https://dppd_plotnine.readthedocs.io/en/latest/
 
