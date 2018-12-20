@@ -21,13 +21,17 @@ Quickstart
    dp, X = dppd()
 
    plot = (
-        dp(mtcars)
-        .assign(kwh=X.hp * 0.74)
-        .p9()
-        .add_point(
-            "cyl", "kwh", "cyl", position=p9.position_jitter(height=0, random_state=500)
-        )
-        .add_errorbar(
+      dp(mtcars)
+      .assign(kwh=X.hp * 0.74)
+      .categorize("cyl")
+      .p9()
+      .add_point(
+            "cyl",
+            "kwh",
+            color="cyl",
+            position=p9.position_jitter(height=0, random_state=500),
+      )
+      .add_errorbar(
             x="cyl",
             y="kwh_median",
             ymin="kwh_median",
@@ -36,14 +40,22 @@ Quickstart
             .groupby("cyl")
             .summarize(("kwh", np.median, "kwh_median"))
             .pd,
-        )
-    ).pd
+      )
+      .scale_color_manual(
+            ["red", "blue", "purple"]
+      )  # after pd, X is what it was before
+      .pd
+    )
     plot.save("test.png")
     
 
 
 .. image:: _static/index.png
 
+
+dppd_plotnine supports two different call conventions,
+one matching plotnine (and ggplot) and another, perhaps
+more convinient one, see `call convention <aes.html>`_.
 
 
 
@@ -54,7 +66,7 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   Call convention / aes replacement <aes.md>
+   Call convention / changes from plotnine. <aes.md>
 
    License <license>
    Authors <authors>
