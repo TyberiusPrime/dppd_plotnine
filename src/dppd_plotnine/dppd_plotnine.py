@@ -122,3 +122,24 @@ def add_xlab_p9(plot, xlab):
 @register_verb("ylab", types=p9.ggplot)
 def add_ylab_p9(plot, ylab):
     return plot + p9.ylab(ylab)
+
+
+def turn_axis_labels(plot, ax, angle, hjust, vjust, size, color):
+    t = p9.themes.element_text(
+        rotation=angle, ha=hjust, va=vjust, size=size, color=color
+    )
+    return plot._change_theme(ax, t)
+
+
+@register_verb("turn_x_axis_label", types=p9.ggplot)
+def turn_x_axis_labels(
+    plot, angle=90, hjust="center", vjust="top", size=None, color=None
+):
+    return turn_axis_labels(plot, "axis_text_x", angle, hjust, vjust, size, color)
+
+
+@register_verb("turn_y_axis_label", types=p9.ggplot)
+def turn_y_axis_labels(
+    plot, angle=90, hjust="hjust", vjust="center", size=None, color=None
+):
+    return turn_axis_labels(plot, "axis_text_y", angle, hjust, vjust, size, color)
