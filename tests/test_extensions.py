@@ -93,3 +93,15 @@ def test_turn_x_axis_labels():
 def test_turn_y_axis_labels():
     actual = (dp(mtcars).head(1).p9().add_point("mpg", "hp").turn_y_axis_labels()).pd
     assert actual == "test_turn_y_axis_labels"
+
+
+def test_reverse_transform():
+    actual = (
+        dp(mtcars)
+        .head(10)
+        .p9()
+        .add_point("mpg", "hp")
+        .scale_y_continuous(trans=dp.reverse_transform("log2"))
+        .pd
+    )
+    assert actual == "test_reverse_transform"
