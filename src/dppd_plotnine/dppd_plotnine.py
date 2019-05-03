@@ -108,12 +108,12 @@ def save(plot, *args, **kwargs):
         kwargs["verbose"] = False
     else:  # pragma: no cover
         pass  # pragma: no cover
+    if hasattr(plot, 'render_args'):
+        org = kwargs
+        kwargs = {}
+        kwargs.update(plot.render_args)
+        kwargs.update(org)
     plot.save(*args, **kwargs)
-    return plot
-
-@register_verb("render_args", types=p9.ggplot)
-def render_args(plot, **render_args):
-    plot.render_args = render_args
     return plot
 
 @register_verb("add_scatter", types=p9.ggplot)
