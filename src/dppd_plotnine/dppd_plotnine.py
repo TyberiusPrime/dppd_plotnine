@@ -111,6 +111,10 @@ def save(plot, *args, **kwargs):
     plot.save(*args, **kwargs)
     return plot
 
+@register_verb("render_args", types=p9.ggplot)
+def render_args(plot, **render_args):
+    plot.render_args = render_args
+    return plot
 
 @register_verb("add_scatter", types=p9.ggplot)
 def add_scatter(plot, *args, **kwargs):
