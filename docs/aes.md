@@ -21,7 +21,7 @@ Method-chaining replaces addition
 
 
 And optionally, aes mapping and kwargs are replaced by kwargs starting with and
-without:
+without underscore:
 ``` python
    dp(df).p9.add_point('x', y='y', _color='red').pd
 ```

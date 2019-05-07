@@ -126,16 +126,58 @@ _many_cat_colors = [
 
 
 @register_verb(types=p9.ggplot)
-def scale_fill_many_categories(plot, offset=0):
+def scale_fill_many_categories(plot, offset=0, **kwargs):
     """A fill scale with some 23 fairly distinguishable colors"""
     return plot + p9.scale_fill_manual(
-        (_many_cat_colors + _many_cat_colors)[offset : offset + len(_many_cat_colors)]
+        (_many_cat_colors + _many_cat_colors)[offset : offset + len(_many_cat_colors)],
+        **kwargs
     )
 
 
 @register_verb(types=p9.ggplot)
-def scale_color_many_categories(plot, offset=0):
+def scale_color_many_categories(plot, offset=0, **kwargs):
     """A color scale with some 23 fairly distinguishable colors"""
     return plot + p9.scale_color_manual(
-        (_many_cat_colors + _many_cat_colors)[offset : offset + len(_many_cat_colors)]
+        (_many_cat_colors + _many_cat_colors)[offset : offset + len(_many_cat_colors)],
+        **kwargs
+    )
+
+
+@register_verb(types=p9.ggplot)
+def aes(_plot, *args, **kwargs):  # pragma: no cover
+    return p9.aes(*args, **kwargs)
+
+
+@register_verb(types=p9.ggplot)
+def reverse_transform(_plot, trans):
+    from mizani.transforms import trans_new
+    from mizani.transforms import gettrans
+    import numpy as np
+
+    """Take a transform and make it go from high to low
+    instead of low to high
+    """
+
+    def inverse_breaks(limits):
+        return trans.breaks(tuple(sorted(limits)))
+
+    def inverse_minor_breaks(major, limits):
+        return trans.minor_breaks(major, tuple(sorted(limits)))
+
+    if isinstance(trans, str):
+        trans = gettrans(trans)
+    if trans.__class__.__name__ != "type":
+        name = "-" + trans.__class__.__name__
+    else:
+        name = "-" + trans.__name__  # pragma: no cover
+    if name.endswith("_trans"):
+        name = name[: -len("_trans")]
+    return trans_new(
+        name,
+        lambda x: -1 * trans.transform(x),
+        lambda x: trans.inverse(np.array(x) * -1),
+        breaks=inverse_breaks,
+        minor_breaks=inverse_minor_breaks,
+        _format=trans.format,
+        domain=trans.domain,
     )

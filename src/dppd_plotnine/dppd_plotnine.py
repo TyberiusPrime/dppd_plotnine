@@ -2,6 +2,7 @@ import plotnine as p9
 from dppd import register_verb
 import pandas as pd
 from patsy import EvalEnvironment
+from . import geoms
 
 
 # this establishes the p9-dppd support
@@ -29,69 +30,76 @@ def sensible_aes_order(required_aes):
     return order
 
 
-for name in dir(p9):
-    if "_" in name and name[: name.find("_")] in (
-        "geom",
-        "annotate",
-        "scale",
-        "theme",
-        "facet",
-        "coord",
-    ):
-        cls = getattr(p9, name)
+def iter_elements():
+    for name in dir(p9):
+        if "_" in name and name[: name.find("_")] in (
+            "geom",
+            "annotate",
+            "scale",
+            "theme",
+            "facet",
+            "coord",
+        ):
+            cls = getattr(p9, name)
+            yield (name, cls)
+    yield ("theme", p9.theme)
+    for name in dir(geoms):
+        cls = getattr(geoms, name)
+        yield (name, cls)
 
-        @register_verb(name, types=p9.ggplot)
-        def add_geom(plot, *args, cls=cls, **kwargs):
-            return plot + cls(*args, **kwargs)
 
-        if name.startswith("geom"):
-            add_name = "add" + name[name.find("_") :]
+for name, cls in iter_elements():
 
-            @register_verb(add_name, types=p9.ggplot)
-            def add_add_geom(plot, *args, cls=cls, **kwargs):
-                if len(args) > len(cls.REQUIRED_AES):
+    @register_verb(name, types=p9.ggplot)
+    def add_geom(plot, *args, cls=cls, **kwargs):
+        return plot + cls(*args, **kwargs)
+
+    if name.startswith("geom"):
+        add_name = "add" + name[name.find("_") :]
+
+        @register_verb(add_name, types=p9.ggplot)
+        def add_add_geom(plot, *args, cls=cls, **kwargs):
+            if len(args) > len(cls.REQUIRED_AES):
+                raise ValueError(
+                    "More position arguments then required aes were passed in. "
+                    "Switch to keyword arguments to precisly define what you mean"
+                )
+            for k, v in zip(sensible_aes_order(cls.REQUIRED_AES), args):
+                if not k in kwargs and not "_" + k in kwargs:
+                    kwargs[k] = v
+                else:
                     raise ValueError(
-                        "More position arguments then required aes were passed in. "
-                        "Switch to keyword arguments to precisly define what you mean"
+                        f"{k} specified twice, once per position and once per kwarg"
                     )
-                for k, v in zip(sensible_aes_order(cls.REQUIRED_AES), args):
-                    if not k in kwargs and not "_" + k in kwargs:
-                        kwargs[k] = v
+            mapped = {}
+            non_mapped = {}
+            for k, v in kwargs.items():
+                if k in never_map:
+                    non_mapped[k] = v
+                elif k.startswith("_"):
+                    non_mapped[k[1:]] = v
+                else:
+                    mapped[k] = v
+
+            if cls is p9.geom_bar and not "stat" in non_mapped:
+                non_mapped["stat"] = p9.stat_identity()
+
+            if "data" in kwargs and kwargs["data"] is None:  # explicitly set to None
+                fake_data = {k: mapped[k] for k in cls.REQUIRED_AES if k in mapped}
+                try:
+                    data = pd.DataFrame(fake_data)
+                except ValueError as e:
+                    if "you must pass an index" in str(e):
+                        data = pd.DataFrame(fake_data, index=[0])
                     else:
-                        raise ValueError(
-                            f"{k} specified twice, once per position and once per kwarg"
-                        )
-                mapped = {}
-                non_mapped = {}
-                for k, v in kwargs.items():
-                    if k in never_map:
-                        non_mapped[k] = v
-                    elif k.startswith("_"):
-                        non_mapped[k[1:]] = v
-                    else:
-                        mapped[k] = v
+                        raise
 
-                if cls is p9.geom_bar and not "stat" in non_mapped:
-                    non_mapped["stat"] = p9.stat_identity()
+                mapped = {k: k for k in cls.REQUIRED_AES if k in mapped}
+                non_mapped["data"] = data
 
-                if (
-                    "data" in kwargs and kwargs["data"] is None
-                ):  # explicitly set to None
-                    fake_data = {k: mapped[k] for k in cls.REQUIRED_AES if k in mapped}
-                    try:
-                        data = pd.DataFrame(fake_data)
-                    except ValueError as e:
-                        if "you must pass an index" in str(e):
-                            data = pd.DataFrame(fake_data, index=[0])
-                        else:
-                            raise
+            return plot + cls(mapped, **non_mapped)
 
-                    mapped = {k: k for k in cls.REQUIRED_AES if k in mapped}
-                    non_mapped["data"] = data
-
-                return plot + cls(mapped, **non_mapped)
-
-            add_funcs[add_name] = add_add_geom
+        add_funcs[add_name] = add_add_geom
 
 
 @register_verb(["save", "render"], types=p9.ggplot)
