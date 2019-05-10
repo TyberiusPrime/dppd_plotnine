@@ -5,6 +5,7 @@ Changelog
 Version 0.2.1
 ===========
  - version no longer managed by git tags
+ - tests no longer need 'mbf_qualitycontrol'
 
 Version 0.2
 ===========
