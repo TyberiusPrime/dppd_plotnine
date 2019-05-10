@@ -182,10 +182,9 @@ def reverse_transform(_plot, trans):
         domain=trans.domain,
     )
 
+
 @register_verb("render_args", types=p9.ggplot)
 def render_args(plot, **render_args):
     """preregister arguments that will be used on save"""
     plot.render_args = render_args
     return plot
-
-
