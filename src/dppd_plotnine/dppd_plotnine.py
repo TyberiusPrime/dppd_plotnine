@@ -52,6 +52,9 @@ for name, cls in iter_elements():
 
     @register_verb(name, types=p9.ggplot)
     def add_geom(plot, *args, cls=cls, **kwargs):
+        if args and isinstance(args[0], dict):
+            args = list(args)
+            args[0] = p9.aes(**args[0])
         return plot + cls(*args, **kwargs)
 
     if name.startswith("geom"):
@@ -97,7 +100,7 @@ for name, cls in iter_elements():
                 mapped = {k: k for k in cls.REQUIRED_AES if k in mapped}
                 non_mapped["data"] = data
 
-            return plot + cls(mapped, **non_mapped)
+            return plot + cls(p9.aes(**mapped), **non_mapped)
 
         add_funcs[add_name] = add_add_geom
 
