@@ -35,6 +35,7 @@ def iter_elements():
         if "_" in name and name[: name.find("_")] in (
             "geom",
             "annotate",
+            "annotation",
             "scale",
             "theme",
             "facet",
