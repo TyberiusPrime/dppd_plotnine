@@ -1,1 +1,1 @@
-from .annotation_stripes import annotation_stripes  # noqa:F401
+from .annotation_stripes_dppd import annotation_stripes_dppd  # noqa:F401

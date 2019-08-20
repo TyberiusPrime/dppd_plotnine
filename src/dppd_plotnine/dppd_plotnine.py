@@ -108,6 +108,13 @@ for name, cls in iter_elements():
 
 @register_verb(["save", "render"], types=p9.ggplot)
 def save(plot, *args, **kwargs):
+    """Save a plot.
+    Arguments are drawn from the kwargs + the plot's .render_args
+    (kwargs overwrite render_args).
+
+    Optional new kw_arg is size, which may be one of A4/A5/A6,
+    and replaces the width&height (use A4 for portrait, a4 for landscape...)"""
+
     if not "verbose" in kwargs:  # pragma: no cover
         kwargs["verbose"] = False
     else:  # pragma: no cover
@@ -117,6 +124,29 @@ def save(plot, *args, **kwargs):
         kwargs = {}
         kwargs.update(plot.render_args)
         kwargs.update(org)
+    if 'size' in kwargs:
+        import re
+        sizes = {
+                1: (23.4, 33.1),
+                2: (16.5, 24.4),
+                3: (11.7, 16.5),
+                4: (8.3, 11.7),
+                5: (5.8, 8.3),
+                6: (4.1, 5.8),
+                7: (2.9, 4.1),
+                }
+        s = kwargs['size']
+        if not re.match("^A|a[1234567]", s):
+                raise ValueError("size must be one of A1..A7 (portrait) or a1..a7 (landscape)")
+        portrait = s[0] == 'A'
+        width, height = sizes[int(s[1])]
+        if not portrait:
+            height, width = width, height
+        del kwargs['size']
+        kwargs['width'] = width
+        kwargs['height'] = height
+        kwargs['unit'] = 'in'
+
     plot.save(*args, **kwargs)
     return plot
 
