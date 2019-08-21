@@ -8,7 +8,7 @@ from plotnine.geoms.geom_rect import geom_rect
 from plotnine.geoms.annotate import annotate
 
 
-class annotation_stripes(annotate):
+class annotation_stripes_dppd(annotate):
     """
     Alternating stripes, centered around each label.
 
