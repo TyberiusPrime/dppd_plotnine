@@ -111,7 +111,7 @@ _many_cat_colors = [
     "#0000FF",
     "#FDBF6F",  # lt orange
     "#B3B3B3",
-    "EEE685",
+    "#EEE685",
     "#B03060",
     "#FF83FA",
     "#FF1493",
