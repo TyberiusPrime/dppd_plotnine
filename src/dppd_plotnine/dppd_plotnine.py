@@ -169,3 +169,8 @@ def add_xlab_p9(plot, xlab):
 @register_verb("ylab", types=p9.ggplot)
 def add_ylab_p9(plot, ylab):
     return plot + p9.ylab(ylab)
+
+@register_verb(["figure_size", 'size', 'fig_size'], types=p9.ggplot)
+def add_figure_size(plot, w,h):
+    return plot + p9.theme(figure_size=(w,h))
+
