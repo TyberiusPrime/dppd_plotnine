@@ -111,7 +111,7 @@ _many_cat_colors = [
     "#0000FF",
     "#FDBF6F",  # lt orange
     "#B3B3B3",
-    "EEE685",
+    "#EEE685",
     "#B03060",
     "#FF83FA",
     "#FF1493",
@@ -188,3 +188,69 @@ def render_args(plot, **render_args):
     """preregister arguments that will be used on save"""
     plot.render_args = render_args
     return plot
+
+
+@register_verb("add_cummulative", types=p9.ggplot)
+def add_cummulative(plot, x_column, ascending=True, percent=False, percentile=1.0):
+    """Add a line showing cumulative % of data <= x.
+        if you specify a percentile, all data at the extreme range is dropped
+
+
+    """
+    import numpy as np
+    import pandas as pd
+    import itertools
+
+    total = 0
+    current = 0
+    column_data = plot.data[x_column].copy()  # explicit copy!
+    column_data = column_data[~np.isnan(column_data)]
+    column_data = np.sort(column_data)
+    total = float(len(column_data))
+    real_total = total
+    if not ascending:
+        column_data = column_data[::-1]  # numpy.reverse(column_data)
+    if percentile != 1.0:
+        if ascending:
+            maximum = np.max(column_data)
+        else:
+            maximum = np.min(column_data)
+        total = float(total * percentile)
+        if total > 0:
+            column_data = column_data[:total]
+            offset = real_total - total
+        else:
+            column_data = column_data[total:]
+            offset = 2 * abs(total)
+    else:
+        offset = 0
+    x_values = []
+    y_values = []
+    if percent:
+        current = 100.0
+    else:
+        current = total
+    for value, group in itertools.groupby(column_data):
+        x_values.append(value)
+        y_values.append(current + offset)
+        if percent:
+            current -= len(list(group)) / total
+        else:
+            current -= len(list(group))
+        # y_values.append(current)
+    data = pd.DataFrame(
+        {x_column: x_values, ("%" if percent else "#") + " <=": y_values}
+    )
+    out_plot = plot
+    if percentile > 0:
+        out_plot = out_plot + p9.scale_x_continuous(
+            limits=[0, real_total if not percent else 100]
+        )
+    out_plot = out_plot + p9.geom_line(
+        p9.aes(x_column, ("%" if percent else "#") + " <="), data=data
+    )
+    if percentile != 1.0:
+        out_plot = out_plot + p9.title(
+            "showing only %.2f percentile, extreme was %.2f" % (percentile, maximum)
+        )
+    return out_plot
