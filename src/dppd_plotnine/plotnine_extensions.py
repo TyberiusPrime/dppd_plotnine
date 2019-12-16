@@ -67,13 +67,13 @@ def hide_axis_ticks(plot):
 
 
 @register_verb(types=p9.ggplot)
-def hide_axis_ticks_x(plot):
+def hide_x_axis_ticks(plot):
     """Hide the ticks on the X axis"""
     return _change_theme(plot, "axis_ticks_major_x", p9.element_blank())
 
 
 @register_verb(types=p9.ggplot)
-def hide_axis_ticks_y(plot):
+def hide_y_axis_ticks(plot):
     """Hide the ticks on the Y axis"""
     return _change_theme(plot, "axis_ticks_major_y", p9.element_blank())
 
