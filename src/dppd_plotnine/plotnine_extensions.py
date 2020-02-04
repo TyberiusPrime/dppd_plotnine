@@ -254,3 +254,28 @@ def add_cummulative(plot, x_column, ascending=True, percent=False, percentile=1.
             "showing only %.2f percentile, extreme was %.2f" % (percentile, maximum)
         )
     return out_plot
+
+
+@register_verb("hide_legend", types=p9.ggplot)
+def hide_legend(plot):
+    """Hide plot legend - whether you have manually defined a scale or not"""
+    import types
+
+    # we need something after compute_aesthetics
+    # (which we can't patch into thanks to the patsy-env binding)
+    # that is passed the plot-object
+    org = plot.layers.compute_aesthetics
+
+    def my_compute_aesthetics(self, p):
+        print("my_compute_aesthetics", type(p))
+        res = self._org_compute_aesthetics(p)
+        for s in p.scales:
+            s.guide = False
+        return res
+
+    plot.layers._org_compute_aesthetics = plot.layers.compute_aesthetics
+    # advanced monkey patching for the win!
+    plot.layers.compute_aesthetics = types.MethodType(
+        my_compute_aesthetics, plot.layers
+    )
+    return plot
