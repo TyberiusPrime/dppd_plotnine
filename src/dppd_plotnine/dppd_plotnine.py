@@ -49,9 +49,19 @@ def iter_elements():
         yield (name, cls)
 
 
+aliases = {
+    "scale_y_continuous": ["syc"],
+    "scale_x_continuous": ["sxc"],
+}
+
 for name, cls in iter_elements():
 
-    @register_verb(name, types=p9.ggplot)
+    if name in aliases:
+        register_name = aliases[name] + [name]
+    else:
+        register_name = name
+
+    @register_verb(register_name, types=p9.ggplot)
     def add_geom(plot, *args, cls=cls, **kwargs):
         if args and isinstance(args[0], dict):
             args = list(args)
@@ -124,28 +134,31 @@ def save(plot, *args, **kwargs):
         kwargs = {}
         kwargs.update(plot.render_args)
         kwargs.update(org)
-    if 'size' in kwargs:
+    if "size" in kwargs:
         import re
+
         sizes = {
-                1: (23.4, 33.1),
-                2: (16.5, 24.4),
-                3: (11.7, 16.5),
-                4: (8.3, 11.7),
-                5: (5.8, 8.3),
-                6: (4.1, 5.8),
-                7: (2.9, 4.1),
-                }
-        s = kwargs['size']
+            1: (23.4, 33.1),
+            2: (16.5, 24.4),
+            3: (11.7, 16.5),
+            4: (8.3, 11.7),
+            5: (5.8, 8.3),
+            6: (4.1, 5.8),
+            7: (2.9, 4.1),
+        }
+        s = kwargs["size"]
         if not re.match("^A|a[1234567]", s):
-                raise ValueError("size must be one of A1..A7 (portrait) or a1..a7 (landscape)")
-        portrait = s[0] == 'A'
+            raise ValueError(
+                "size must be one of A1..A7 (portrait) or a1..a7 (landscape)"
+            )
+        portrait = s[0] == "A"
         width, height = sizes[int(s[1])]
         if not portrait:
             height, width = width, height
-        del kwargs['size']
-        kwargs['width'] = width
-        kwargs['height'] = height
-        kwargs['unit'] = 'in'
+        del kwargs["size"]
+        kwargs["width"] = width
+        kwargs["height"] = height
+        kwargs["unit"] = "in"
 
     plot.save(*args, **kwargs)
     return plot
@@ -170,7 +183,7 @@ def add_xlab_p9(plot, xlab):
 def add_ylab_p9(plot, ylab):
     return plot + p9.ylab(ylab)
 
-@register_verb(["figure_size", 'size', 'fig_size'], types=p9.ggplot)
-def add_figure_size(plot, w,h):
-    return plot + p9.theme(figure_size=(w,h))
 
+@register_verb(["figure_size", "size", "fig_size"], types=p9.ggplot)
+def add_figure_size(plot, w, h):
+    return plot + p9.theme(figure_size=(w, h))

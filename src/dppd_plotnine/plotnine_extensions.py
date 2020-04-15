@@ -279,3 +279,32 @@ def hide_legend(plot):
         my_compute_aesthetics, plot.layers
     )
     return plot
+
+@register_verb('scx10', types=p9.ggplot)
+def sxc10(plot, *args, **kwargs):
+    """scale_x_continuous(trans='log10',...)"""
+    if not 'trans' in kwargs:
+        kwargs['trans'] = 'log10'
+    return plot + p9.scale_x_continuous(*args, **kwargs)
+
+@register_verb('scy10', types=p9.ggplot)
+def syc10(plot, *args, **kwargs):
+    """scale_y_continuous(trans='log10',...)"""
+    if not 'trans' in kwargs:
+        kwargs['trans'] = 'log10'
+    return plot + p9.scale_y_continuous(*args, **kwargs)
+
+@register_verb('scx2', types=p9.ggplot)
+def sxc2(plot, *args, **kwargs):
+    """scale_x_continuous(trans='log2',...)"""
+    if not 'trans' in kwargs:
+        kwargs['trans'] = 'log2'
+    return plot + p9.scale_x_continuous(*args, **kwargs)
+
+@register_verb('scy2', types=p9.ggplot)
+def syc2(plot, *args, **kwargs):
+    """scale_y_continuous(trans='log2',...)"""
+    if not 'trans' in kwargs:
+        kwargs['trans'] = 'log2'
+    return plot + p9.scale_y_continuous(*args, **kwargs)
+
