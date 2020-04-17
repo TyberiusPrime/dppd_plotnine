@@ -70,6 +70,17 @@ for name, cls in iter_elements():
 
     if name.startswith("geom"):
         add_name = "add" + name[name.find("_") :]
+        cyberpunks = ["add_point", "add_line", "add_boxplot", "add_bar"]
+        if add_name in cyberpunks:
+
+            @register_verb(add_name, types=p9.ggplot, pass_dppd=True)
+            def add_wrapped_add_geom(dppd, *args, add_name=add_name, **kwargs):
+                if hasattr(dppd.df, "cyberpunked"):
+                    return getattr(dppd, add_name + "_cyberpunk")(*args, **kwargs)
+                else:
+                    return getattr(dppd, "_" + add_name)(*args, **kwargs)
+
+            add_name = "_" + add_name
 
         @register_verb(add_name, types=p9.ggplot)
         def add_add_geom(plot, *args, cls=cls, **kwargs):
@@ -164,9 +175,9 @@ def save(plot, *args, **kwargs):
     return plot
 
 
-@register_verb("add_scatter", types=p9.ggplot)
-def add_scatter(plot, *args, **kwargs):
-    return add_funcs["add_point"](plot, *args, **kwargs)
+@register_verb("add_scatter", types=p9.ggplot, pass_dppd=True)
+def add_scatter(dppd, *args, **kwargs):
+    return dppd.add_point(*args, **kwargs)
 
 
 @register_verb("title", types=p9.ggplot)
