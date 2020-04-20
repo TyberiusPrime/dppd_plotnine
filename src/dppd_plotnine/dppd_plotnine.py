@@ -14,6 +14,7 @@ def p9_DataFrame(df, mapping=None):
 
 
 never_map = set(["data", "stat", "position"])
+other_args = set(['DEFAULT_AES'])
 
 add_funcs = {}
 
@@ -98,8 +99,11 @@ for name, cls in iter_elements():
                     )
             mapped = {}
             non_mapped = {}
+            other = {}
             for k, v in kwargs.items():
-                if k in never_map:
+                if k in other_args:
+                    other[k] = v
+                elif k in never_map:
                     non_mapped[k] = v
                 elif k.startswith("_"):
                     non_mapped[k[1:]] = v
@@ -122,7 +126,11 @@ for name, cls in iter_elements():
                 mapped = {k: k for k in cls.REQUIRED_AES if k in mapped}
                 non_mapped["data"] = data
 
-            return plot + cls(p9.aes(**mapped), **non_mapped)
+            geom = cls(p9.aes(**mapped), **non_mapped)
+            if 'DEFAULT_AES' in other:
+                geom.DEFAULT_AES = geom.DEFAULT_AES.copy()
+                geom.DEFAULT_AES.update(other['DEFAULT_AES'])
+            return plot + geom
 
         add_funcs[add_name] = add_add_geom
 

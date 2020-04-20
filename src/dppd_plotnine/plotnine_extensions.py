@@ -321,10 +321,10 @@ def theme_cyberpunk(plot, theme_kwargs={}):
         "text": p9.element_text(color="#E5E5E5"),
         "legend_background": p9.element_rect(fill="#212946"),
         "legend_key": p9.element_rect(fill="#212946"),
-        "panel_grid_major": p9.element_line(color="#4A5479"),
-        "panel_grid_minor": p9.element_line(color="#3A4469"),
-        "axis_ticks_major": p9.element_line(color="white"),
-        "axis_ticks_minor": p9.element_line(color="white"),
+        "panel_grid_major": p9.element_line(color="#5A6489"),
+        "panel_grid_minor": p9.element_line(color="#5A6489"),
+        "axis_ticks_major": p9.element_line(color="#5A6489"),
+        "axis_ticks_minor": p9.element_line(color="#5A6489"),
     }
     theme.update(theme_kwargs)
     return plot + p9.theme(**theme)
@@ -355,8 +355,8 @@ def cyberpunk(dppd):
     """Turn this plot into a cyberpunk styled plot with theme and glowing figures"""
     res = dppd.theme_cyberpunk().scale_color_cyberpunk().scale_fill_cyberpunk()
     res.df.cyberpunked = True
-    #res.add_scatter = res.add_scatter_cyberpunk
-    #res.add_line = res.add_line_cyberpunk
+    # res.add_scatter = res.add_scatter_cyberpunk
+    # res.add_line = res.add_line_cyberpunk
     return res
 
 
@@ -373,11 +373,8 @@ def add_scatter_cyberpunk(dppd, *args, **kwargs):
         kwargs["_size"] = 2
         kwargs_glow["_size"] = 5
     kwargs_glow["_alpha"] = 0.1
-    if not "color" in kwargs:
-        kwargs["color"] = '"a"'
-        kwargs["_show_legend"] = False
     res = dppd._add_point(*args, **kwargs_glow)
-    return res._add_point(*args, **kwargs)
+    return res._add_point(*args, **kwargs, DEFAULT_AES={"color": "white"})
 
 
 @register_verb("add_line_cyberpunk", types=p9.ggplot, pass_dppd=True)
@@ -405,39 +402,34 @@ def add_line_cyberpunk(dppd, *args, **kwargs):
         kwargs_glow2["_show_legend"] = False
     res = dppd._add_line(*args, **kwargs_glow2)
     res = res._add_line(*args, **kwargs_glow1)
-    return res._add_line(*args, **kwargs)
+    return res._add_line(*args, **kwargs, DEFAULT_AES={"color": "white"})
 
-@register_verb('add_boxplot_cyberpunk', types=p9.ggplot, pass_dppd=True)
+
+@register_verb("add_boxplot_cyberpunk", types=p9.ggplot, pass_dppd=True)
 def add_boxplot_cyberpunk(dppd, *args, **kwargs):
-    if not '_outlier_size' in kwargs:
-        kwargs['_outlier_size'] = 1.5
-    if not "color" in kwargs and not "_color" in kwargs:
-        kwargs["color"] = '"a"'
-        kwargs['_show_legend'] = False
-    if not 'fill' in kwargs and not '_fill' in kwargs:
-        kwargs['_fill'] = None
+    if not "_outlier_size" in kwargs:
+        kwargs["_outlier_size"] = 1.5
+    if not "fill" in kwargs and not "_fill" in kwargs:
+        kwargs["_fill"] = None
     kwargs_glow1 = kwargs.copy()
-    kwargs_glow1['_outlier_size'] = kwargs['_outlier_size'] + 3
-    kwargs_glow1['_outlier_alpha'] = .1
-    kwargs_glow1['_size'] = 3
-    kwargs_glow1['_alpha'] = .1
-    kwargs['_outlier_size'] = 1.5
+    kwargs_glow1["_outlier_size"] = kwargs["_outlier_size"] + 3
+    kwargs_glow1["_outlier_alpha"] = 0.1
+    kwargs_glow1["_size"] = 3
+    kwargs_glow1["_alpha"] = 0.1
+    kwargs["_outlier_size"] = 1.5
     res = dppd._add_boxplot(*args, **kwargs_glow1)
-    return res._add_boxplot(*args, **kwargs)
+    return res._add_boxplot(*args, **kwargs, DEFAULT_AES={'color': 'white'})
 
-@register_verb('add_bar_cyberpunk', types=p9.ggplot, pass_dppd=True)
+
+@register_verb("add_bar_cyberpunk", types=p9.ggplot, pass_dppd=True)
 def add_bar_cyberpunk(dppd, *args, **kwargs):
-    if not'_size' in kwargs:
-        kwargs['_size'] = 0.5
-    if not "color" in kwargs and not "_color" in kwargs:
-        kwargs["color"] = '"a"'
-        kwargs['_show_legend'] = False
+    if not "_size" in kwargs:
+        kwargs["_size"] = 0.5
     kwargs_glow1 = kwargs.copy()
-    if not 'fill' in kwargs and not '_fill' in kwargs:
-        kwargs_glow1['_fill'] = 'blue'
-        kwargs['_fill'] = None
-    kwargs_glow1['_alpha'] = 0.1
-    kwargs_glow1['_size'] = kwargs['_size'] + 2.5
+    if not "fill" in kwargs and not "_fill" in kwargs:
+        kwargs_glow1["_fill"] = "blue"
+        kwargs["_fill"] = None
+    kwargs_glow1["_alpha"] = 0.1
+    kwargs_glow1["_size"] = kwargs["_size"] + 2.5
     res = dppd._add_bar(*args, **kwargs_glow1)
-    return res._add_bar(*args, **kwargs)
-
+    return res._add_bar(*args, **kwargs, DEFAULT_AES={'color': 'white'})
