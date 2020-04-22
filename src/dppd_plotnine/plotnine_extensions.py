@@ -261,11 +261,6 @@ def hide_legend(plot):
     """Hide plot legend - whether you have manually defined a scale or not"""
     import types
 
-    # we need something after compute_aesthetics
-    # (which we can't patch into thanks to the patsy-env binding)
-    # that is passed the plot-object
-    org = plot.layers.compute_aesthetics
-
     def my_compute_aesthetics(self, p):
         print("my_compute_aesthetics", type(p))
         res = self._org_compute_aesthetics(p)
