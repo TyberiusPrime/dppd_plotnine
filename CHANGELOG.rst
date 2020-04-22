@@ -2,6 +2,16 @@
 Changelog
 =========
 
+Version 0.2.4
+==============
+- annotation_stripes -> annotation_stripes_dppd (we still have some improvements from the plotnine default)
+- experimental .cyberpunk() aesthetics
+- scale_x/y_continious aliases (sxc, sxc10 for log10, sxc2 for log())
+- .hide_legend
+- .figure_size/fig_size/size for adjusting size in jupyter notebooks
+- .add_cummulative
+
+
 Version 0.2.1
 ===========
  - version no longer managed by git tags
