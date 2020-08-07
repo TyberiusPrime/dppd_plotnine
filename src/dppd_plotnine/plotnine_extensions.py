@@ -275,6 +275,9 @@ def hide_legend(plot):
     )
     return plot
 
+@register_verb('sc10', types=p9.ggplot)
+def sc10(plot):
+    return plot + p9.scale_x_continuous(trans='log10') + p9.scale_y_continuous(trans='log10')
 
 @register_verb("sxc10", types=p9.ggplot)
 def sxc10(plot, *args, **kwargs):
