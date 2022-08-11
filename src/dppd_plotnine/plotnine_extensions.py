@@ -96,6 +96,11 @@ def hide_facet_labels(plot):
     _change_theme(plot, "strip_background", p9.element_blank())
     return _change_theme(plot, "strip_text_x", p9.element_blank())
 
+@register_verb(types=p9.ggplot)
+def hide_legend_title(plot):
+    """Hide the legend label"""
+    return _change_theme(plot, "legend_title", p9.element_blank())
+
 
 _many_cat_colors = [
     "#1C86EE",
