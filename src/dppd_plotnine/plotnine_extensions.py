@@ -267,7 +267,6 @@ def hide_legend(plot):
     import types
 
     def my_compute_aesthetics(self, p):
-        print("my_compute_aesthetics", type(p))
         res = self._org_compute_aesthetics(p)
         for s in p.scales:
             s.guide = False
