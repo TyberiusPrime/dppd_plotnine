@@ -147,6 +147,23 @@ def scale_color_many_categories(plot, offset=0, **kwargs):
         **kwargs
     )
 
+@register_verb(types=p9.ggplot)
+def scale_color_cmap_discrete(plot, *args, **kwargs):
+    """Just an alias"""
+    return plot + p9.scale_color_cmap_d(
+            *args,
+        **kwargs
+    )
+@register_verb(types=p9.ggplot)
+def scale_fill_cmap_discrete(plot, *args, **kwargs):
+    """Just an alias for cmap_d"""
+    return plot + p9.scale_fill_cmap_d(
+            *args,
+        **kwargs
+    )
+
+
+
 
 @register_verb(types=p9.ggplot)
 def aes(_plot, *args, **kwargs):  # pragma: no cover
