@@ -30,7 +30,7 @@ def test_annotation_strips_horiontal(per_test_dir):
         .categorize("cyl")
         .p9()
         .theme_bw()
-        .annotation_stripes(direction="horizontal", fills=["#FF0000", "#00FF00"])
+        .annotation_stripes(direction="horizontal", fill=["#00FF00", "#FF0000"])
         .add_scatter("hp", "cyl")
         .pd
     )
@@ -43,7 +43,7 @@ def test_annotation_strips_horiontal_coord_flip(per_test_dir):
         .categorize("cyl")
         .p9()
         .theme_bw()
-        .annotation_stripes(direction="horizontal", fills=["#FF0000", "#00FF00"])
+        .annotation_stripes(direction="horizontal", fill=["#00FF00", "#FF0000"])
         .add_scatter("hp", "cyl")
         .coord_flip()
         .pd

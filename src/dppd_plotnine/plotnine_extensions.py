@@ -12,9 +12,12 @@ def _change_theme(plot, what, t):
 
 
 def _turn_axis_labels(plot, ax, angle, hjust, vjust, size, color):
-    t = p9.themes.element_text(
-        rotation=angle, ha=hjust, va=vjust, size=size, color=color
-    )
+    try:
+        t = p9.themes.element_text(
+            rotation=angle, ha=hjust, va=vjust, size=size, color=color
+        )
+    except AttributeError:
+        t = p9.element_text(rotation=angle, ha=hjust, va=vjust, size=size, color=color)
     return _change_theme(plot, ax, t)
 
 
@@ -96,6 +99,7 @@ def hide_facet_labels(plot):
     _change_theme(plot, "strip_background", p9.element_blank())
     return _change_theme(plot, "strip_text_x", p9.element_blank())
 
+
 @register_verb(types=p9.ggplot)
 def hide_legend_title(plot):
     """Hide the legend label"""
@@ -147,22 +151,17 @@ def scale_color_many_categories(plot, offset=0, **kwargs):
         **kwargs
     )
 
+
 @register_verb(types=p9.ggplot)
 def scale_color_cmap_discrete(plot, *args, **kwargs):
     """Just an alias"""
-    return plot + p9.scale_color_cmap_d(
-            *args,
-        **kwargs
-    )
+    return plot + p9.scale_color_cmap_d(*args, **kwargs)
+
+
 @register_verb(types=p9.ggplot)
 def scale_fill_cmap_discrete(plot, *args, **kwargs):
     """Just an alias for cmap_d"""
-    return plot + p9.scale_fill_cmap_d(
-            *args,
-        **kwargs
-    )
-
-
+    return plot + p9.scale_fill_cmap_d(*args, **kwargs)
 
 
 @register_verb(types=p9.ggplot)
@@ -215,7 +214,7 @@ def render_args(plot, **render_args):
 @register_verb("add_cummulative", types=p9.ggplot)
 def add_cummulative(plot, x_column, ascending=True, percent=False, percentile=1.0):
     """Add a line showing cumulative % of data <= x.
-        if you specify a percentile, all data at the extreme range is dropped
+    if you specify a percentile, all data at the extreme range is dropped
 
 
     """
@@ -296,9 +295,15 @@ def hide_legend(plot):
     )
     return plot
 
-@register_verb('sc10', types=p9.ggplot)
+
+@register_verb("sc10", types=p9.ggplot)
 def sc10(plot):
-    return plot + p9.scale_x_continuous(trans='log10') + p9.scale_y_continuous(trans='log10')
+    return (
+        plot
+        + p9.scale_x_continuous(trans="log10")
+        + p9.scale_y_continuous(trans="log10")
+    )
+
 
 @register_verb("sxc10", types=p9.ggplot)
 def sxc10(plot, *args, **kwargs):
@@ -437,7 +442,7 @@ def add_boxplot_cyberpunk(dppd, *args, **kwargs):
     kwargs_glow1["_alpha"] = 0.1
     kwargs["_outlier_size"] = 1.5
     res = dppd._add_boxplot(*args, **kwargs_glow1)
-    return res._add_boxplot(*args, **kwargs, DEFAULT_AES={'color': 'white'})
+    return res._add_boxplot(*args, **kwargs, DEFAULT_AES={"color": "white"})
 
 
 @register_verb("add_bar_cyberpunk", types=p9.ggplot, pass_dppd=True)
@@ -451,4 +456,4 @@ def add_bar_cyberpunk(dppd, *args, **kwargs):
     kwargs_glow1["_alpha"] = 0.1
     kwargs_glow1["_size"] = kwargs["_size"] + 2.5
     res = dppd._add_bar(*args, **kwargs_glow1)
-    return res._add_bar(*args, **kwargs, DEFAULT_AES={'color': 'white'})
+    return res._add_bar(*args, **kwargs, DEFAULT_AES={"color": "white"})

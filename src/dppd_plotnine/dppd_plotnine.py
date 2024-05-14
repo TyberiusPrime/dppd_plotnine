@@ -10,11 +10,19 @@ from . import geoms
 
 @register_verb("p9", types=pd.DataFrame)
 def p9_DataFrame(df, mapping=None):
-    return p9.ggplot(mapping=mapping, data=df, environment=EvalEnvironment.capture(2))
+    try:
+        return p9.ggplot(
+            mapping=mapping, data=df, environment=EvalEnvironment.capture(2)
+        )
+    except TypeError as e:
+        if "environment" in str(e):  # support for plotnine > 0.13
+            res = p9.ggplot(mapping=mapping, data=df)
+            res.environment = p9.mapping._env.Environment.capture(2)
+            return res
 
 
 never_map = set(["data", "stat", "position"])
-other_args = set(['DEFAULT_AES'])
+other_args = set(["DEFAULT_AES"])
 
 add_funcs = {}
 
@@ -29,9 +37,6 @@ def sensible_aes_order(required_aes):
         if a != "x" and a != "y":
             order.append(a)
     return order
-
-
-
 
 
 def iter_elements():
@@ -58,8 +63,7 @@ aliases = {
     "scale_x_continuous": ["sxc"],
 }
 
-for name, cls in iter_elements():
-
+for name, cls in iter_elements():  # noqa:C901
     if name in aliases:
         register_name = aliases[name] + [name]
     else:
@@ -130,9 +134,9 @@ for name, cls in iter_elements():
                 non_mapped["data"] = data
 
             geom = cls(p9.aes(**mapped), **non_mapped)
-            if 'DEFAULT_AES' in other:
+            if "DEFAULT_AES" in other:
                 geom.DEFAULT_AES = geom.DEFAULT_AES.copy()
-                geom.DEFAULT_AES.update(other['DEFAULT_AES'])
+                geom.DEFAULT_AES.update(other["DEFAULT_AES"])
             return plot + geom
 
         add_funcs[add_name] = add_add_geom

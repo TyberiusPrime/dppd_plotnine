@@ -37,12 +37,12 @@ def test_hide_axis_ticks():
 
 
 def test_hide_axis_ticks_x():
-    actual = dp(mtcars).head(1).p9().add_point("mpg", "hp").hide_axis_ticks_x().pd
+    actual = dp(mtcars).head(1).p9().add_point("mpg", "hp").hide_x_axis_ticks().pd
     assert actual == "test_hide_axis_ticks_x"
 
 
 def test_hide_axis_ticks_y():
-    actual = dp(mtcars).head(1).p9().add_point("mpg", "hp").hide_axis_ticks_y().pd
+    actual = dp(mtcars).head(1).p9().add_point("mpg", "hp").hide_y_axis_ticks().pd
     assert actual == "test_hide_axis_ticks_y"
 
 
