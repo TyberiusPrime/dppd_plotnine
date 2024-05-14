@@ -246,6 +246,8 @@ def per_test_dir(request):
     target_path = target_path.absolute()
     target_path.mkdir(parents=True)
     old_dir = Path(os.getcwd()).absolute()
+
+    os.chdir(target_path)
     try:
 
         def np():

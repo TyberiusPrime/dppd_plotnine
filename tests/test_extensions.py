@@ -105,3 +105,43 @@ def test_reverse_transform():
         .pd
     )
     assert actual == "test_reverse_transform"
+
+
+def get_image_info(data):
+    import struct
+    if is_png(data):
+        w, h = struct.unpack('>LL', data[16:24])
+        width = int(w)
+        height = int(h)
+    else:
+        raise Exception('not a png image')
+    return width, height
+
+def is_png(data):
+    print(data[:8])
+    return (data[:8] == b'\211PNG\r\n\032\n'and (data[12:16] == b'IHDR'))
+
+def test_save_size(per_test_dir):
+    actual = (
+        dp(mtcars)
+        .head(10)
+        .p9()
+        .add_point("mpg", "hp")
+        .render("test.png", size='a4', dpi=150)
+        .pd
+    )
+    info = get_image_info(open("test.png",'rb').read())
+    assert info[0] == 1755
+    assert info[1] == 1245
+    actual = (
+        dp(mtcars)
+        .head(10)
+        .p9()
+        .add_point("mpg", "hp")
+        .render("test.png", size='A4', dpi=150)
+        .pd
+    )
+    info = get_image_info(open("test.png",'rb').read())
+    assert info[1] == 1755
+    assert info[0] == 1245
+

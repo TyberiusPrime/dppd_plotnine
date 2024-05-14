@@ -184,7 +184,7 @@ def save(plot, *args, **kwargs):
         del kwargs["size"]
         kwargs["width"] = width
         kwargs["height"] = height
-        kwargs["unit"] = "in"
+        # kwargs["unit"] = "in"
 
     plot.save(*args, **kwargs)
     return plot
