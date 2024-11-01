@@ -281,19 +281,22 @@ def add_cummulative(plot, x_column, ascending=True, percent=False, percentile=1.
 def hide_legend(plot):
     """Hide plot legend - whether you have manually defined a scale or not"""
     import types
+    if tuple([int(x) for x in p9.__version__.split(".")]) >= (0,8,0):
+        return plot + p9.theme(legend_position="none")
+    else:
 
-    def my_compute_aesthetics(self, p):
-        res = self._org_compute_aesthetics(p)
-        for s in p.scales:
-            s.guide = False
-        return res
+        def my_compute_aesthetics(self, p):
+            res = self._org_compute_aesthetics(p)
+            for s in p.scales:
+                s.guide = False
+            return res
 
-    plot.layers._org_compute_aesthetics = plot.layers.compute_aesthetics
-    # advanced monkey patching for the win!
-    plot.layers.compute_aesthetics = types.MethodType(
-        my_compute_aesthetics, plot.layers
-    )
-    return plot
+        plot.layers._org_compute_aesthetics = plot.layers.compute_aesthetics
+        # advanced monkey patching for the win!
+        plot.layers.compute_aesthetics = types.MethodType(
+            my_compute_aesthetics, plot.layers
+        )
+        return plot
 
 
 @register_verb("sc10", types=p9.ggplot)
