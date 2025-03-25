@@ -179,8 +179,10 @@ def reverse_transform(_plot, trans):
     instead of low to high
     """
 
-    def inverse_breaks(limits):
-        return trans.breaks(tuple(sorted(limits)))
+    def inverse_breaks(*args):
+        if args and isinstance(args[0], tuple):
+            args = args[0]
+        return trans.breaks(tuple(sorted(args)))
 
     def inverse_minor_breaks(major, limits):
         return trans.minor_breaks(major, tuple(sorted(limits)))
