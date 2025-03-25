@@ -139,7 +139,7 @@ def scale_fill_many_categories(plot, offset=0, **kwargs):
     """A fill scale with some 23 fairly distinguishable colors"""
     return plot + p9.scale_fill_manual(
         (_many_cat_colors + _many_cat_colors)[offset : offset + len(_many_cat_colors)],
-        **kwargs
+        **kwargs,
     )
 
 
@@ -148,7 +148,7 @@ def scale_color_many_categories(plot, offset=0, **kwargs):
     """A color scale with some 23 fairly distinguishable colors"""
     return plot + p9.scale_color_manual(
         (_many_cat_colors + _many_cat_colors)[offset : offset + len(_many_cat_colors)],
-        **kwargs
+        **kwargs,
     )
 
 
@@ -281,7 +281,8 @@ def add_cummulative(plot, x_column, ascending=True, percent=False, percentile=1.
 def hide_legend(plot):
     """Hide plot legend - whether you have manually defined a scale or not"""
     import types
-    if tuple([int(x) for x in p9.__version__.split(".")]) >= (0,8,0):
+
+    if tuple([int(x) for x in p9.__version__.split(".")]) >= (0, 8, 0):
         return plot + p9.theme(legend_position="none")
     else:
 

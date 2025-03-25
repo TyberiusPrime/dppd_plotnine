@@ -123,7 +123,7 @@ ggplot.build_test = build_test
 
 def pytest_assertrepr_compare(op, left, right):
     if isinstance(left, ggplot) and isinstance(right, str) and op == "==":
-        msg = "images not close: {actual:s} vs. {expected:s} " "(RMS {rms:.2f})".format(
+        msg = "images not close: {actual:s} vs. {expected:s} (RMS {rms:.2f})".format(
             **left._err
         )
         return [msg]

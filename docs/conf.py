@@ -97,7 +97,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "dppd_plotnine"
-copyright = "2018, Florian Finkernagel"
+copyright = "2025, Florian Finkernagel"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
