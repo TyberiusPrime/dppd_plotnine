@@ -40,7 +40,7 @@
       });
     };
     #pyprojectOverrides = final: prev: {} ;
-    interpreter = pkgs.python312;
+    interpreter = pkgs.python313;
     spec = {
       dppd-plotnine = ["dev"];
     };

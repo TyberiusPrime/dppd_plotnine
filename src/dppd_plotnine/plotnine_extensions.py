@@ -171,38 +171,38 @@ def aes(_plot, *args, **kwargs):  # pragma: no cover
 
 @register_verb(types=p9.ggplot)
 def reverse_transform(_plot, trans):
-    from mizani.transforms import trans_new
-    from mizani.transforms import gettrans
+    # see https://github.com/has2k1/mizani/issues/56
     import numpy as np
+    if isinstance(trans, str):
+        import mizani.transforms
+        trans = mizani.transforms.gettrans(trans)
 
-    """Take a transform and make it go from high to low
-    instead of low to high
-    """
+    def _transform(self, x):
+        return -1 * trans.transform(x)
 
-    def inverse_breaks(*args):
-        if args and isinstance(args[0], tuple):
-            args = args[0]
-        return trans.breaks(tuple(sorted(args)))
+    def _inverse(self, x):
+        return trans.inverse(np.array(x) * -1)
 
-    def inverse_minor_breaks(major, limits):
+    def _breaks(self, limits):
+        return trans.breaks(limits=tuple(sorted(limits)))
+
+    def _minor_breaks(self, major, limits=None, n=None):
         return trans.minor_breaks(major, tuple(sorted(limits)))
 
-    if isinstance(trans, str):
-        trans = gettrans(trans)
-    if trans.__class__.__name__ != "type":
-        name = "-" + trans.__class__.__name__
-    else:
-        name = "-" + trans.__name__  # pragma: no cover
-    if name.endswith("_trans"):
-        name = name[: -len("_trans")]
-    return trans_new(
+    # figure out the name and the transform class
+
+    name = f"reversed_{trans.__class__.__name__}"
+    trans_class = trans.__class__
+
+    return type(
         name,
-        lambda x: -1 * trans.transform(x),
-        lambda x: trans.inverse(np.array(x) * -1),
-        breaks=inverse_breaks,
-        minor_breaks=inverse_minor_breaks,
-        _format=trans.format,
-        domain=trans.domain,
+        (trans_class,),
+        {
+            "transform": _transform,
+            "inverse": _inverse,
+            "breaks": _breaks,
+            "minor_breaks": _minor_breaks,
+        },
     )
 
 

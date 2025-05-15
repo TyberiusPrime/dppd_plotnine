@@ -3,13 +3,14 @@ name = "dppd-plotnine"
 version = "0.2.8"
 description = "Combines plotnine and dppd"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.13"
 authors = [
 	{name = "Florian Finkernagel", email = "finkernagel@imt.uni-marburg.de"}
 ]
 license={file="LICENSE.txt"}
 dependencies = [
     "plotnine>=0.13",
+	"mizani>=0.13",
     "dppd",
 ]
 
