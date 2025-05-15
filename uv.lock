@@ -165,7 +165,7 @@ sdist = { url = "https://files.pythonhosted.org/packages/04/e0/4d5bf0ba13089b5e0
 
 [[package]]
 name = "dppd-plotnine"
-version = "0.2.8"
+version = "0.2.9"
 source = { editable = "." }
 dependencies = [
     { name = "dppd" },
