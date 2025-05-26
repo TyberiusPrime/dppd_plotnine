@@ -291,7 +291,7 @@ def hide_legend(plot):
         def my_compute_aesthetics(self, p):
             res = self._org_compute_aesthetics(p)
             for s in p.scales:
-                s.guide = False
+                s.guide = None
             return res
 
         plot.layers._org_compute_aesthetics = plot.layers.compute_aesthetics
