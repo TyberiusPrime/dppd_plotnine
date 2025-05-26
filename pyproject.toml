@@ -1,6 +1,6 @@
 [project]
 name = "dppd-plotnine"
-version = "0.2.9"
+version = "0.2.10"
 description = "Combines plotnine and dppd"
 readme = "README.md"
 requires-python = ">=3.12"
