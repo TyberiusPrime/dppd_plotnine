@@ -2,6 +2,10 @@
 Changelog
 =========
 
+Version 0.2.12
+==============
+jitter-plots: always set a random state
+
 Version 0.2.4
 ==============
 - annotation_stripes -> annotation_stripes_dppd (we still have some improvements from the plotnine default)

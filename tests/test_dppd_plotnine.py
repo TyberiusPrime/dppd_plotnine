@@ -273,6 +273,7 @@ def test_create_doc_image():
             .save("docs/_static/index.png")
         )
         for k in record:
-            assert (k.category == PendingDeprecationWarning) or (
-                k.category == FutureWarning
-            ) | (k.category == DeprecationWarning)
+            assert issubclass(
+                k.category,
+                (PendingDeprecationWarning, FutureWarning, DeprecationWarning),
+            )
