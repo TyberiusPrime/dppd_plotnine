@@ -117,8 +117,10 @@ for name, cls in iter_elements():  # noqa:C901
                 else:
                     mapped[k] = v
 
-            if cls is p9.geom_bar and not "stat" in non_mapped:
+            if cls is p9.geom_bar and "stat" not in non_mapped:
                 non_mapped["stat"] = p9.stat_identity()
+            if cls is p9.geom_jitter and 'random_state' not in non_mapped:
+                non_mapped['random_state'] = 42
 
             if "data" in kwargs and kwargs["data"] is None:  # explicitly set to None
                 fake_data = {k: mapped[k] for k in cls.REQUIRED_AES if k in mapped}
