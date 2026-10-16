@@ -119,8 +119,8 @@ for name, cls in iter_elements():  # noqa:C901
 
             if cls is p9.geom_bar and "stat" not in non_mapped:
                 non_mapped["stat"] = p9.stat_identity()
-            if cls is p9.geom_jitter and 'random_state' not in non_mapped:
-                non_mapped['random_state'] = 42
+            if cls is p9.geom_jitter and "random_state" not in non_mapped:
+                non_mapped["random_state"] = 42
 
             if "data" in kwargs and kwargs["data"] is None:  # explicitly set to None
                 fake_data = {k: mapped[k] for k in cls.REQUIRED_AES if k in mapped}
@@ -210,6 +210,42 @@ def add_xlab_p9(plot, xlab):
 @register_verb("ylab", types=p9.ggplot)
 def add_ylab_p9(plot, ylab):
     return plot + p9.ylab(ylab)
+
+
+@register_verb("labs", types=p9.ggplot)
+def add_lab_p9(
+    plot,
+    x=None,
+    y=None,
+    alpha=None,
+    color=None,
+    colour=None,
+    fill=None,
+    linetype=None,
+    shape=None,
+    size=None,
+    stroke=None,
+    title=None,
+    subtitle=None,
+    caption=None,
+    tag=None,
+):
+    return plot + p9.labs(
+        x,
+        y,
+        alpha,
+        color,
+        colour,
+        fill,
+        linetype,
+        shape,
+        size,
+        stroke,
+        title,
+        subtitle,
+        caption,
+        tag,
+    )
 
 
 @register_verb(["figure_size", "size", "fig_size"], types=p9.ggplot)
