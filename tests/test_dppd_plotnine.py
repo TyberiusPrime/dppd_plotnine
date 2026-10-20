@@ -245,35 +245,58 @@ def test_coord_flip():
 
 
 def test_create_doc_image():
-    #with pytest.warns() as record:
+    # with pytest.warns() as record:
+    (
+        dp(mtcars)
+        .assign(kwh=X.hp * 0.74)
+        .categorize("cyl")
+        .p9()
+        .add_point(
+            "cyl",
+            "kwh",
+            color="cyl",
+            position=p9.position_jitter(height=0, random_state=500),
+        )
+        .add_errorbar(
+            x="cyl",
+            y="kwh_median",
+            ymin="kwh_median",
+            ymax="kwh_median",
+            data=dp(X.data)
+            .groupby("cyl")
+            .summarize(("kwh", np.median, "kwh_median"))
+            .pd,
+        )
+        .scale_color_manual(
+            ["red", "blue", "purple"]
+        )  # after pd, X is what it was before
+        .save("docs/_static/index.png")
+    )
+    # for k in record:
+    #     assert issubclass(
+    #         k.category,
+    #         (PendingDeprecationWarning, FutureWarning, DeprecationWarning),
+    #     )
+
+
+def test_labs():
+    actual = (
+        dp(mtcars)
+        .p9()
+        .add_scatter(x=1, y=1, data=None)
+        .labs(title="hello")
+        .xlab("world")
+        .ylab("today")
+        .pd
+    )
+    assert actual == "test_labs"
+
+
+def test_labs_throws_on_invalid():
+    with pytest.raises(TypeError):
         (
             dp(mtcars)
-            .assign(kwh=X.hp * 0.74)
-            .categorize("cyl")
             .p9()
-            .add_point(
-                "cyl",
-                "kwh",
-                color="cyl",
-                position=p9.position_jitter(height=0, random_state=500),
-            )
-            .add_errorbar(
-                x="cyl",
-                y="kwh_median",
-                ymin="kwh_median",
-                ymax="kwh_median",
-                data=dp(X.data)
-                .groupby("cyl")
-                .summarize(("kwh", np.median, "kwh_median"))
-                .pd,
-            )
-            .scale_color_manual(
-                ["red", "blue", "purple"]
-            )  # after pd, X is what it was before
-            .save("docs/_static/index.png")
+            .add_scatter(x=1, y=1, data=None)
+            .labs(title_no_such_argument="hello")
         )
-        # for k in record:
-        #     assert issubclass(
-        #         k.category,
-        #         (PendingDeprecationWarning, FutureWarning, DeprecationWarning),
-        #     )

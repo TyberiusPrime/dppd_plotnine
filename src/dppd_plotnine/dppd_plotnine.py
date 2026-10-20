@@ -3,6 +3,7 @@ from dppd import register_verb
 import pandas as pd
 from patsy import EvalEnvironment
 from . import geoms
+from functools import cache
 
 
 # this establishes the p9-dppd support
@@ -212,9 +213,25 @@ def add_ylab_p9(plot, ylab):
     return plot + p9.ylab(ylab)
 
 
+@cache
+def _labs_accepted_params():
+    """Names p9.labs accepts, or None if it takes **kwargs (accepts anything)."""
+    import inspect
+
+    params = inspect.signature(p9.labs).parameters
+    if any(p.kind is p.VAR_KEYWORD for p in params.values()):
+        return None
+    return frozenset(
+        name
+        for name, p in params.items()
+        if p.kind in (p.POSITIONAL_OR_KEYWORD, p.KEYWORD_ONLY)
+    )
+
+
 @register_verb("labs", types=p9.ggplot)
 def add_lab_p9(
     plot,
+    *,
     x=None,
     y=None,
     alpha=None,
@@ -230,22 +247,36 @@ def add_lab_p9(
     caption=None,
     tag=None,
 ):
-    return plot + p9.labs(
-        x,
-        y,
-        alpha,
-        color,
-        colour,
-        fill,
-        linetype,
-        shape,
-        size,
-        stroke,
-        title,
-        subtitle,
-        caption,
-        tag,
-    )
+    kwargs = {
+        "x": x,
+        "y": y,
+        "alpha": alpha,
+        "color": color,
+        "colour": colour,
+        "fill": fill,
+        "linetype": linetype,
+        "shape": shape,
+        "size": size,
+        "stroke": stroke,
+        "title": title,
+        "subtitle": subtitle,
+        "caption": caption,
+        "tag": tag,
+    }
+    # Only forward what the caller actually set
+    kwargs = {k: v for k, v in kwargs.items() if v is not None}
+
+    accepted = _labs_accepted_params()
+    if accepted is not None:
+        unsupported = kwargs.keys() - accepted
+        if unsupported:
+            raise TypeError(
+                f"p9.labs in plotnine {p9.__version__} does not accept "
+                f"{sorted(unsupported)};",
+            )
+        kwargs = {k: v for k, v in kwargs.items() if k in accepted}
+
+    return plot + p9.labs(**kwargs)
 
 
 @register_verb(["figure_size", "size", "fig_size"], types=p9.ggplot)
